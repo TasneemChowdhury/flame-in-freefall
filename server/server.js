@@ -2,7 +2,7 @@ const express = require("express");
 const cors = require("cors");
 require("dotenv").config();
 
-// Import MySQL connection pool
+// Import the server-side Supabase client
 const db = require("./database/connection");
 
 const app = express();
@@ -30,12 +30,19 @@ app.get("/api/health", (req, res) => {
 // Database connection test
 app.get("/api/db-test", async (req, res) => {
     try {
-        const [rows] = await db.query("SELECT 1 AS result");
+        const { error } = await db
+            .from("investigations")
+            .select("id")
+            .limit(1);
+
+        if (error) {
+            throw error;
+        }
 
         res.json({
             status: "success",
-            message: "Successfully connected to MySQL!",
-            database_test: rows[0].result
+            message: "Successfully connected to Supabase!",
+            database_test: "ok"
         });
     } catch (error) {
         console.error("Database connection error:", error);

@@ -1,14 +1,19 @@
-const mysql = require("mysql2/promise");
+const { createClient } = require("@supabase/supabase-js");
 
-const pool = mysql.createPool({
-  host: process.env.DB_HOST,
-  user: process.env.DB_USER,
-  password: process.env.DB_PASSWORD,
-  database: process.env.DB_NAME,
+const supabaseUrl = process.env.SUPABASE_URL;
+const supabaseSecretKey = process.env.SUPABASE_SECRET_KEY;
 
-  waitForConnections: true,
-  connectionLimit: 10,
-  queueLimit: 0,
+if (!supabaseUrl) {
+  throw new Error("SUPABASE_URL is required. Add it to server/.env.");
+}
+
+if (!supabaseSecretKey) {
+  throw new Error("SUPABASE_SECRET_KEY is required. Add it to server/.env.");
+}
+
+module.exports = createClient(supabaseUrl, supabaseSecretKey, {
+  auth: {
+    autoRefreshToken: false,
+    persistSession: false,
+  },
 });
-
-module.exports = pool;

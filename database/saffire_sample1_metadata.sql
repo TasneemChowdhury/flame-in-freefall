@@ -1,9 +1,8 @@
 -- Run after schema.sql. Adds only verified SAFFIRE-I Sample 1 metadata.
-USE flame_in_freefall;
 
-START TRANSACTION;
+BEGIN;
 
-INSERT INTO investigations (
+INSERT INTO public.investigations (
     title,
     description
 )
@@ -12,19 +11,18 @@ SELECT
     'Studies low-gravity large-scale fire growth and whether the fire reaches a steady-state spread rate.'
 WHERE NOT EXISTS (
     SELECT 1
-    FROM investigations
+    FROM public.investigations
     WHERE title = 'SAFFIRE-I'
 );
 
-SET @saffire_investigation_id = (
+WITH investigation AS (
     SELECT id
-    FROM investigations
+    FROM public.investigations
     WHERE title = 'SAFFIRE-I'
     ORDER BY id
     LIMIT 1
-);
-
-INSERT INTO experiments (
+)
+INSERT INTO public.experiments (
     investigation_id,
     title,
     description,
@@ -33,24 +31,24 @@ INSERT INTO experiments (
     metadata
 )
 SELECT
-    @saffire_investigation_id,
+    investigation.id,
     'SAFFIRE-I Sample 1',
     'Sample 1 test using SIBAL cloth (75% cotton and 25% fiberglass by weight). The documented nominal airflow velocity is 20 cm/s.',
     NULL,
     NULL,
-    JSON_OBJECT(
+    jsonb_build_object(
         'sample_number', 1,
-        'fuel', JSON_OBJECT(
+        'fuel', jsonb_build_object(
             'type', 'solid',
             'material', 'SIBAL cloth',
-            'composition_by_weight', JSON_OBJECT(
+            'composition_by_weight', jsonb_build_object(
                 'cotton_percent', 75,
                 'fiberglass_percent', 25
             ),
             'shape', NULL,
             'dimensions', NULL
         ),
-        'environment', JSON_OBJECT(
+        'environment', jsonb_build_object(
             'gravity', 'low gravity',
             'nominal_airflow_cm_s', 20,
             'oxygen_percent', NULL,
@@ -59,12 +57,12 @@ SELECT
         'source_document', 'SAFFIRE-I and SAFFIRE-III DoD.docx',
         'unknowns_note', 'Null values were not specified in the reviewed source document.'
     )
-WHERE @saffire_investigation_id IS NOT NULL
-  AND NOT EXISTS (
+FROM investigation
+WHERE NOT EXISTS (
       SELECT 1
-      FROM experiments
-      WHERE investigation_id = @saffire_investigation_id
-        AND title = 'SAFFIRE-I Sample 1'
+      FROM public.experiments AS existing
+      WHERE existing.investigation_id = investigation.id
+        AND existing.title = 'SAFFIRE-I Sample 1'
   );
 
 COMMIT;
@@ -74,7 +72,7 @@ SELECT
     e.id AS experiment_id,
     i.title AS investigation,
     e.title AS experiment
-FROM investigations AS i
-JOIN experiments AS e ON e.investigation_id = i.id
+FROM public.investigations AS i
+JOIN public.experiments AS e ON e.investigation_id = i.id
 WHERE i.title = 'SAFFIRE-I'
   AND e.title = 'SAFFIRE-I Sample 1';

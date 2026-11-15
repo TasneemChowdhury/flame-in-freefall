@@ -4,76 +4,46 @@ A web-based, SI-powered dashboard for exploring NASA combustion research.
 
 ## Technology Stack
 
-### Frontend
+- Frontend: React, JavaScript, CSS
+- Backend: Node.js, Express.js
+- Database: Supabase PostgreSQL
 
-- React
-- JavaScript
-- CSS
+## Supabase Setup
 
-### Backend
+1. Create a Supabase project and copy its project URL and server-side secret key from **Project Settings → API Keys**. Use the `service_role` key if your project only shows legacy API keys.
+2. In Supabase **SQL Editor**, run these files in order:
+   - `database/schema.sql`
+   - `database/saffire_sample1_metadata.sql`
+   - `database/saffire_sensor_readings.sql`
+3. Copy `.env.example` to `server/.env` and fill in `SUPABASE_URL` and `SUPABASE_SECRET_KEY`. The secret key is server-only; never put it in the frontend or commit `server/.env`.
+4. Install and start the backend, then import the sample sensor readings:
 
-- Node.js
-- Express.js
+   ```bash
+   cd server
+   npm install
+   npm run db:import-sensors
+   npm run dev
+   ```
 
-### Database
+   The importer loads the 20,000 rows from `database/saffire_sample1_core.csv` through Supabase's HTTPS API. It is safe to rerun; existing `(source_file, record_index)` rows are skipped.
 
-- MySQL
+The tables have row-level security enabled. The backend uses the secret key server-side to access them through Supabase's HTTPS API.
 
-## Project Structure
+The backend runs at <http://localhost:5001>. Verify the database connection at <http://localhost:5001/api/db-test>.
 
-```text
-flame-in-freefall/
-├── client/       # React frontend
-├── server/       # Express backend
-├── database/     # SQL schema and seed data
-└── docs/         # Project documentation
-```
-
-## Getting Started
-
-### 1. Clone the repository
-
-```bash
-git clone [text](https://github.com/TasneemChowdhury/flame-in-freefall)
-cd flame-in-freefall
-```
-
-### 2. Install frontend dependencies
-
-```bash
-cd client
-npm install
-```
-
-### 3. Install backend dependencies
-
-```bash
-cd ../server
-npm install
-```
-
-### 4. Start the backend
-
-```bash
-npm run dev
-```
-
-The backend runs on:
-
-<http://localhost:5001>
-
-### 5. Start the frontend
+## Frontend Setup
 
 In a separate terminal:
 
 ```bash
 cd client
+npm install
 npm run dev
 ```
 
 ## Team
 
-Tasneem Sultana Chowdhury
-Sara Loudagh
+- Tasneem Sultana Chowdhury
+- Sara Loudagh
 
 Developed as part of the NASA Space Apps Challenge.
