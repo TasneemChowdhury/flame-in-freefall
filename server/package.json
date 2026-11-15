@@ -6,7 +6,8 @@
   "scripts": {
     "start": "node server.js",
     "dev": "nodemon server.js",
-    "db:import-sensors": "node scripts/import-sensor-readings.js"
+    "db:import-sensors": "node scripts/import-sensor-readings.js",
+    "db:import-flex": "node scripts/import-flex-test-runs.js"
   },
   "keywords": [],
   "author": "",

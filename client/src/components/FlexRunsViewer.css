@@ -1,0 +1,350 @@
+/* FLEX Runs Viewer Stylesheet */
+
+.flex-runs-container {
+  margin-top: 42px;
+  padding: 30px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: rgba(16, 19, 26, 0.96);
+  box-shadow: 0 16px 36px rgba(0, 0, 0, 0.4);
+}
+
+.flex-runs-head {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  padding-bottom: 22px;
+  border-bottom: 1px solid #232734;
+}
+
+.runs-eyebrow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--orange);
+  font: 600 11px var(--mono);
+  letter-spacing: 1.2px;
+  margin-bottom: 6px;
+}
+
+.runs-title {
+  margin: 0 0 6px 0;
+  font-size: 24px;
+  font-weight: 600;
+  color: #fff;
+  letter-spacing: -0.3px;
+}
+
+.runs-subtitle {
+  margin: 0;
+  font-size: 13px;
+  color: var(--muted);
+  max-width: 750px;
+  line-height: 1.5;
+}
+
+/* KPI Grid */
+.flex-kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(135px, 1fr));
+  gap: 12px;
+  margin-top: 8px;
+}
+
+.flex-kpi-card {
+  padding: 12px 14px;
+  border-radius: 8px;
+  background: #12151e;
+  border: 1px solid #222634;
+}
+
+.flex-kpi-card.highlight {
+  border-color: rgba(255, 116, 77, 0.4);
+  background: rgba(255, 116, 77, 0.08);
+}
+
+.kpi-label {
+  display: block;
+  font: 9px var(--mono);
+  color: #72798c;
+  letter-spacing: 0.8px;
+  margin-bottom: 5px;
+}
+
+.flex-kpi-card.highlight .kpi-label {
+  color: #ff9b7e;
+}
+
+.kpi-val {
+  font: 700 18px var(--mono);
+  color: #fff;
+}
+
+.kpi-val small {
+  font-size: 11px;
+  color: #798092;
+  font-weight: 400;
+}
+
+/* Filter Controls */
+.runs-filter-bar {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin-top: 22px;
+  padding: 14px 18px;
+  background: #12151f;
+  border: 1px solid #202432;
+  border-radius: 8px;
+}
+
+.runs-search input {
+  padding: 7px 12px;
+  border-radius: 6px;
+  border: 1px solid #2d3344;
+  background: #0d0f16;
+  color: #fff;
+  font-size: 12px;
+  min-width: 220px;
+  outline: none;
+}
+
+.runs-search input:focus {
+  border-color: var(--orange);
+}
+
+.filter-chip-group {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.chip-group-label {
+  font: 10px var(--mono);
+  color: #6a7183;
+  margin-right: 2px;
+}
+
+.filter-chip {
+  padding: 5px 10px;
+  border-radius: 5px;
+  border: 1px solid #282d3b;
+  background: #161923;
+  color: #a2a8b9;
+  font-size: 11px;
+  cursor: pointer;
+  transition: all 120ms ease;
+}
+
+.filter-chip:hover {
+  background: #202534;
+  color: #fff;
+}
+
+.filter-chip.active {
+  border-color: #ff744d;
+  background: rgba(255, 116, 77, 0.16);
+  color: #ff9d81;
+  font-weight: 600;
+}
+
+/* Table Wrapper */
+.runs-table-wrapper {
+  margin-top: 20px;
+  overflow-x: auto;
+  border: 1px solid #222633;
+  border-radius: 8px;
+  background: #0f121a;
+}
+
+.runs-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+  font-size: 12px;
+}
+
+.runs-table th,
+.runs-table td {
+  padding: 11px 14px;
+  border-bottom: 1px solid #1a1e28;
+  vertical-align: middle;
+}
+
+.runs-table th {
+  background: #141722;
+  font: 600 10px var(--mono);
+  color: #838a9b;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+
+.runs-table tr:hover td {
+  background: #151924;
+}
+
+.mono-num {
+  font-family: var(--mono);
+  color: #cbd0df;
+}
+
+.mono-num.bold {
+  font-weight: 600;
+  color: #fff;
+}
+
+.mono-num small {
+  display: block;
+  font-size: 9px;
+  color: #6a7082;
+}
+
+.test-id-cell strong {
+  font-family: var(--mono);
+  color: #ff9b7e;
+  font-size: 12px;
+}
+
+.date-cell span {
+  display: block;
+  color: #c0c5d5;
+}
+
+.date-cell small {
+  display: block;
+  font: 9px var(--mono);
+  color: #6a7182;
+}
+
+/* Fuel tags */
+.fuel-tag {
+  display: inline-block;
+  padding: 3px 7px;
+  border-radius: 4px;
+  font: 10px var(--mono);
+}
+
+.fuel-tag.fuel-methanol {
+  background: rgba(84, 180, 211, 0.14);
+  color: #72d0ea;
+  border: 1px solid rgba(84, 180, 211, 0.35);
+}
+
+.fuel-tag.fuel-heptane {
+  background: rgba(245, 158, 11, 0.14);
+  color: #fbbf24;
+  border: 1px solid rgba(245, 158, 11, 0.35);
+}
+
+/* Diluent tags */
+.diluent-tag {
+  display: inline-block;
+  padding: 2px 6px;
+  border-radius: 3px;
+  font: 9px var(--mono);
+  margin-right: 4px;
+}
+
+.diluent-tag.co2 {
+  background: rgba(168, 85, 247, 0.15);
+  color: #c084fc;
+  border: 1px solid rgba(168, 85, 247, 0.3);
+}
+
+.diluent-tag.he {
+  background: rgba(59, 130, 246, 0.15);
+  color: #60a5fa;
+  border: 1px solid rgba(59, 130, 246, 0.3);
+}
+
+.diluent-tag.baseline {
+  background: #1a1e29;
+  color: #798092;
+  border: 1px solid #272d3d;
+}
+
+/* Outcomes */
+.outcome-badge {
+  display: inline-block;
+  padding: 3px 8px;
+  border-radius: 4px;
+  font: 600 10px var(--mono);
+  text-transform: uppercase;
+}
+
+.outcome-badge.outcome-extinction {
+  background: rgba(164, 201, 156, 0.15);
+  color: #a4c99c;
+  border: 1px solid rgba(164, 201, 156, 0.35);
+}
+
+.outcome-badge.outcome-disruption {
+  background: rgba(239, 68, 68, 0.15);
+  color: #f87171;
+  border: 1px solid rgba(239, 68, 68, 0.35);
+}
+
+.outcome-badge.outcome-completion {
+  background: rgba(59, 130, 246, 0.15);
+  color: #93c5fd;
+  border: 1px solid rgba(59, 130, 246, 0.35);
+}
+
+.ext-val {
+  color: #a4c99c;
+  font-weight: 600;
+}
+
+.muted-dash {
+  color: #555c6e;
+}
+
+.no-runs-msg {
+  text-align: center;
+  padding: 28px;
+  color: #72798b;
+}
+
+/* Pagination */
+.runs-pagination {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 16px;
+  padding-top: 14px;
+  border-top: 1px solid #202432;
+  font-size: 12px;
+}
+
+.page-summary {
+  color: #798092;
+  font-family: var(--mono);
+  font-size: 11px;
+}
+
+.page-buttons {
+  display: flex;
+  gap: 8px;
+}
+
+.page-buttons button {
+  padding: 6px 12px;
+  border-radius: 5px;
+  border: 1px solid #2b3040;
+  background: #161924;
+  color: #cbd1e0;
+  font-size: 11px;
+  cursor: pointer;
+  transition: all 120ms ease;
+}
+
+.page-buttons button:hover:not(:disabled) {
+  background: #222737;
+  color: #fff;
+}
+
+.page-buttons button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
