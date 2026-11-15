@@ -1,16 +1,23 @@
-# React + Vite
+# Flame in Freefall — Frontend
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+The React/Vite dashboard prototype for exploring NASA microgravity combustion research and its relevance to fire safety in crewed space environments.
 
-Currently, two official plugins are available:
+## Run locally
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+From the `client` directory:
 
-## React Compiler
+```bash
+npm install
+npm run dev
+```
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+The prototype currently uses local sample data in `src/App.jsx`; it does not yet request investigation data or SI responses from the backend.
 
-## Expanding the ESLint configuration
+## Prototype behavior
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+- Search investigations by name, project, safety focus, fuel, hardware, and tags.
+- Filter by prevention, detection, or suppression.
+- Select an investigation to see its brief and fire-safety context.
+- Try the SI preview, which returns a local placeholder response.
+
+Relevance scores and research summaries are prototype content, not NASA-published rankings or official interpretations. Replace the sample data and placeholder response with the backend/API contract when it is ready.
