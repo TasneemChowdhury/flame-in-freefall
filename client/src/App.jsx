@@ -248,8 +248,7 @@ function App() {
             Flame in <span>Freefall</span>
           </h1>
           <p className="intro-copy">
-            Decades of microgravity combustion research across FLEX, BASS, Saffire, and CFI-G,
-            connected to critical fire-safety questions for Moon and Mars exploration habitats.
+            Explore how flames behave in microgravity. Compare NASA’s FLEX, FLEX-2, BASS, Saffire, and CFI-G experiments, then use SI synthesis to investigate fire-safety strategies for future Moon and Mars missions.
           </p>
         </section>
 
