@@ -259,6 +259,58 @@ app.get("/api/flex/runs", async (req, res) => {
 });
 
 /**
+ * GET /api/flex2/matrix
+ * Returns the official NASA PSI-68 FLEX-2 experimental sample matrix
+ */
+app.get("/api/flex2/matrix", async (req, res) => {
+  try {
+    let samples = [];
+    try {
+      const { data, error } = await db
+        .from("flex2_test_matrix")
+        .select("*")
+        .order("id");
+      if (!error && data && data.length > 0) {
+        samples = data;
+      }
+    } catch {
+      // Fallback
+    }
+
+    if (samples.length === 0) {
+      samples = [
+        { sample_name: "IsoOctane (pure)", fuel_category: "Pure Fuel", droplet_range_mm: "1.5 - 5.0", gas_mixture: "O2/N2 or O2/He", o2_mole_fractions: [0.17, 0.21, 0.25, 0.3], pressures_atm: [0.5, 1.0, 1.5, 2.0, 3.0], temp_c: 25, flow_velocity_cm_s: "0.1 - 5.0" },
+        { sample_name: "n-Octane (pure)", fuel_category: "Pure Fuel", droplet_range_mm: "1.5 - 5.0", gas_mixture: "O2/N2 or O2/He", o2_mole_fractions: [0.17, 0.21, 0.25, 0.3], pressures_atm: [0.5, 1.0, 1.5, 2.0, 3.0], temp_c: 25, flow_velocity_cm_s: "0.1 - 5.0" },
+        { sample_name: "Heptane (pure)", fuel_category: "Pure Fuel", droplet_range_mm: "1.5 - 5.0", gas_mixture: "O2/N2 or O2/He", o2_mole_fractions: [0.17, 0.21, 0.25, 0.3], pressures_atm: [0.5, 1.0, 1.5, 2.0, 3.0], temp_c: 25, flow_velocity_cm_s: "0.1 - 5.0" },
+        { sample_name: "Decane (pure)", fuel_category: "Pure Fuel", droplet_range_mm: "1.5 - 5.0", gas_mixture: "O2/N2 or O2/He", o2_mole_fractions: [0.17, 0.21, 0.25, 0.3], pressures_atm: [0.5, 1.0, 1.5, 2.0, 3.0], temp_c: 25, flow_velocity_cm_s: "0.1 - 5.0" },
+        { sample_name: "Ethanol (pure)", fuel_category: "Pure Fuel", droplet_range_mm: "1.5 - 5.0", gas_mixture: "O2/N2 or O2/He", o2_mole_fractions: [0.17, 0.21, 0.25, 0.3], pressures_atm: [0.5, 1.0, 1.5, 2.0, 3.0], temp_c: 25, flow_velocity_cm_s: "0.1 - 5.0" },
+        { sample_name: "Propanol (95%) Glycerol (5%) (mixture)", fuel_category: "Binary Mixture", droplet_range_mm: "1.5 - 5.0", gas_mixture: "O2/N2 or O2/He", o2_mole_fractions: [0.17, 0.21, 0.25, 0.3], pressures_atm: [0.5, 1.0, 1.5, 2.0, 3.0], temp_c: 25, flow_velocity_cm_s: "0.1 - 5.0" },
+        { sample_name: "Heptane (50%) IsoOctane (50%) (mixture)", fuel_category: "Binary Mixture", droplet_range_mm: "1.5 - 5.0", gas_mixture: "O2/N2 or O2/He", o2_mole_fractions: [0.17, 0.21, 0.25, 0.3], pressures_atm: [0.5, 1.0, 1.5, 2.0, 3.0], temp_c: 25, flow_velocity_cm_s: "0.1 - 5.0" },
+        { sample_name: "Propanol (80%) Glycerol (20%) (mixture)", fuel_category: "Binary Mixture", droplet_range_mm: "1.5 - 5.0", gas_mixture: "O2/N2 or O2/He", o2_mole_fractions: [0.17, 0.21, 0.25, 0.3], pressures_atm: [0.5, 1.0, 1.5, 2.0, 3.0], temp_c: 25, flow_velocity_cm_s: "0.1 - 5.0" },
+      ];
+    }
+
+    res.json({
+      status: "success",
+      investigation: "PSI-68 FLEX-2",
+      samples_count: samples.length,
+      samples,
+      summary: {
+        pure_fuels_count: 5,
+        binary_mixtures_count: 3,
+        droplet_diameters_mm: [1.5, 5.0],
+        oxygen_mole_fractions: [0.17, 0.21, 0.25, 0.30],
+        ambient_pressures_atm: [0.5, 1.0, 1.5, 2.0, 3.0],
+        ambient_temperature_c: 25.0,
+        flow_velocity_cm_s: [0.1, 5.0],
+      },
+    });
+  } catch (err) {
+    res.status(500).json({ status: "error", message: err.message });
+  }
+});
+
+/**
  * GET /api/compare
  * Query: acronyms=PSI-69,PSI-68 or ids=1,2
  * Generates side-by-side comparison matrix with pivoted parameters and scenario alignments

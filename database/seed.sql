@@ -198,13 +198,15 @@ SELECT id, 'Burning Rate Constant K (mm/s)', 0.05, 1.06, 'mm/s' FROM public.inve
 UNION ALL
 SELECT id, 'Burn Duration (s)', 0.30, 39.20, 's' FROM public.investigations WHERE acronym = 'PSI-69';
 
--- PSI-68 (FLEX-2) Parameters
+-- PSI-68 (FLEX-2) Parameters (Calibrated directly from NASA PSI-68 Experimental Matrix)
 INSERT INTO public.investigation_parameters (investigation_id, parameter_name, min_value, max_value, unit)
 SELECT id, 'Pressure (atm)', 0.50, 3.00, 'atm' FROM public.investigations WHERE acronym = 'PSI-68'
 UNION ALL
-SELECT id, 'Oxygen Mole Fraction', 0.10, 0.40, 'fraction' FROM public.investigations WHERE acronym = 'PSI-68'
+SELECT id, 'Oxygen Mole Fraction', 0.17, 0.30, 'fraction' FROM public.investigations WHERE acronym = 'PSI-68'
 UNION ALL
-SELECT id, 'Initial Droplet Size (mm)', 1.00, 5.00, 'mm' FROM public.investigations WHERE acronym = 'PSI-68'
+SELECT id, 'Initial Droplet Size (mm)', 1.50, 5.00, 'mm' FROM public.investigations WHERE acronym = 'PSI-68'
+UNION ALL
+SELECT id, 'Chamber Flow Velocity (cm/s)', 0.10, 5.00, 'cm/s' FROM public.investigations WHERE acronym = 'PSI-68'
 UNION ALL
 SELECT id, 'Droplet Spacing Ratio (d/d0)', 1.50, 5.00, 'ratio' FROM public.investigations WHERE acronym = 'PSI-68'
 UNION ALL

@@ -59,8 +59,9 @@ module.exports = [
       "How do interactive droplet arrays, soot shells, and fuel volatility differentials affect burning rate and extinction under elevated pressures?",
     investigation_parameters: [
       { parameter_name: "Pressure (atm)", min_value: 0.5, max_value: 3.0, unit: "atm" },
-      { parameter_name: "Oxygen Mole Fraction", min_value: 0.1, max_value: 0.4, unit: "fraction" },
-      { parameter_name: "Initial Droplet Size (mm)", min_value: 1.0, max_value: 5.0, unit: "mm" },
+      { parameter_name: "Oxygen Mole Fraction", min_value: 0.17, max_value: 0.3, unit: "fraction" },
+      { parameter_name: "Initial Droplet Size (mm)", min_value: 1.5, max_value: 5.0, unit: "mm" },
+      { parameter_name: "Chamber Flow Velocity (cm/s)", min_value: 0.1, max_value: 5.0, unit: "cm/s" },
       { parameter_name: "Droplet Spacing Ratio (d/d0)", min_value: 1.5, max_value: 5.0, unit: "ratio" },
       { parameter_name: "Soot Volume Fraction (ppm)", min_value: 0.0001, max_value: 0.008, unit: "ppm" },
       { parameter_name: "Burning Rate Constant K (mm2/s)", min_value: 0.35, max_value: 1.15, unit: "mm^2/s" },
