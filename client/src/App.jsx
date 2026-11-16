@@ -4,7 +4,6 @@ import ComparisonMatrix from './components/ComparisonMatrix'
 import FlexRunsViewer from './components/FlexRunsViewer'
 import {
   fetchInvestigations,
-  requestSISynthesis,
   FALLBACK_INVESTIGATIONS,
 } from './services/supabaseClient'
 
@@ -87,11 +86,7 @@ function App() {
   const [selectedAcronym, setSelectedAcronym] = useState('PSI-69')
   const [comparisonAcronyms, setComparisonAcronyms] = useState(['PSI-69', 'PSI-68'])
   const [activeView, setActiveView] = useState('all') // 'all', 'library', 'matrix'
-
-  // SI Assistant State
-  const [question, setQuestion] = useState('')
-  const [answer, setAnswer] = useState('')
-  const [isAskingSI, setIsAskingSI] = useState(false)
+  const [isBriefHidden, setIsBriefHidden] = useState(false)
 
   // Fetch dynamic investigations from API / Supabase on mount
   useEffect(() => {
@@ -161,39 +156,12 @@ function App() {
     }
   }
 
-  // Handle SI Research Assistant submission
-  async function submitQuestion(event) {
-    event.preventDefault()
-    const trimmed = question.trim()
-    if (!trimmed || !selectedInvestigation) return
-
-    setIsAskingSI(true)
-    setAnswer('')
-
-    try {
-      const res = await requestSISynthesis({
-        acronyms: [selectedInvestigation.acronym],
-        scenario: 'Lunar Base >= 30% O2',
-        userQuery: trimmed,
-        selectedExperiments: [selectedInvestigation],
-      })
-      setAnswer(res.synthesis)
-    } catch (err) {
-      setAnswer(
-        `[SI Combustion Insight]: In microgravity, ${selectedInvestigation.acronym} demonstrates that without buoyant plume dissipation, combustion products linger spherically around the fuel source. For ${selectedInvestigation.fuel_domain?.toLowerCase()} fuels, extinction relies on radiative cooling or inert dilution rather than convective blowoff.`
-      )
-    } finally {
-      setIsAskingSI(false)
-    }
-  }
-
   function selectFilter(filter) {
     setActiveFilter(filter)
-    setAnswer('')
   }
 
   return (
-    <div className="app-shell">
+    <div className={`app-shell${isBriefHidden ? ' brief-hidden' : ''}`}>
       {/* Sidebar Navigation */}
       <aside className="sidebar">
         <a className="brand" href="#overview" aria-label="Flame in Freefall home">
@@ -256,8 +224,18 @@ function App() {
             <span>FIRE SAFETY IN MICROGRAVITY</span>
           </div>
           <div className="topbar-meta">
-            <span className="live-dot" /> SUPABASE LIVE REPOSITORY{' '}
-            <span className="meta-divider" /> SI POWERED
+            <span className="live-dot" />
+            <span>SUPABASE LIVE REPOSITORY</span>
+            <button
+              type="button"
+              className="brief-toggle-btn"
+              aria-controls="investigation-brief-panel"
+              aria-expanded={!isBriefHidden}
+              aria-label={`${isBriefHidden ? 'Show' : 'Hide'} investigation brief`}
+              onClick={() => setIsBriefHidden((hidden) => !hidden)}
+            >
+              {isBriefHidden ? 'Show brief' : 'Hide brief'}
+            </button>
           </div>
         </header>
 
@@ -357,7 +335,6 @@ function App() {
                   value={query}
                   onChange={(event) => {
                     setQuery(event.target.value)
-                    setAnswer('')
                   }}
                   aria-label="Search investigations"
                 />
@@ -395,97 +372,103 @@ function App() {
             </div>
 
             {/* Investigation List */}
-            <div className="investigation-list">
-              {visibleInvestigations.map((item, index) => {
-                const isSelectedInList = selectedInvestigation?.acronym === item.acronym
-                const isInMatrix = comparisonAcronyms.includes(item.acronym)
+            <div
+              className="investigation-list-scroll"
+              role="region"
+              aria-label="Research library results, scroll horizontally to see all columns"
+              tabIndex={0}
+            >
+              <div className="investigation-list">
+                {visibleInvestigations.map((item, index) => {
+                  const isSelectedInList = selectedInvestigation?.acronym === item.acronym
+                  const isInMatrix = comparisonAcronyms.includes(item.acronym)
 
-                return (
-                  <div
-                    key={item.acronym}
-                    className={`investigation-row${isSelectedInList ? ' is-selected' : ''}`}
-                    onClick={() => {
-                      setSelectedAcronym(item.acronym)
-                      setAnswer('')
-                    }}
-                  >
-                    <span className={`row-index${isSelectedInList ? ' current' : ''}`}>
-                      {String(index + 1).padStart(2, '0')}
-                    </span>
-
-                    <span className="row-copy">
-                      <span className="row-title">
-                        <strong>{item.acronym}</strong> — {item.full_name || item.name}
-                      </span>
-                      <span className="row-subtitle">
-                        {item.fuel_domain || item.fuel} Fuel
-                        <span className="row-dot">·</span>
-                        {item.hardware_rack || item.hardware}
-                        <span className="row-dot">·</span>
-                        {item.space_application || 'Microgravity'}
-                      </span>
-                    </span>
-
-                    <button
-                      type="button"
-                      className={`row-compare-btn ${isInMatrix ? 'is-active' : ''}`}
-                      title={isInMatrix ? 'Remove from Comparison Matrix' : 'Add to Comparison Matrix'}
-                      onClick={(e) => {
-                        e.stopPropagation()
-                        toggleComparison(item.acronym)
+                  return (
+                    <div
+                      key={item.acronym}
+                      className={`investigation-row${isSelectedInList ? ' is-selected' : ''}`}
+                      onClick={() => {
+                        setSelectedAcronym(item.acronym)
                       }}
                     >
-                      {isInMatrix ? '✓ In Matrix' : '+ Compare'}
-                    </button>
+                      <span className={`row-index${isSelectedInList ? ' current' : ''}`}>
+                        {String(index + 1).padStart(2, '0')}
+                      </span>
 
-                    <span
-                      className={`focus-pill focus-${(
-                        item.fire_safety_pillar ||
-                        item.type ||
-                        'prevention'
-                      ).toLowerCase()}`}
+                      <span className="row-copy">
+                        <span className="row-title">
+                          <strong>{item.acronym}</strong> — {item.full_name || item.name}
+                        </span>
+                        <span className="row-subtitle">
+                          {item.fuel_domain || item.fuel} Fuel
+                          <span className="row-dot">·</span>
+                          {item.hardware_rack || item.hardware}
+                          <span className="row-dot">·</span>
+                          {item.space_application || 'Microgravity'}
+                        </span>
+                      </span>
+
+                      <button
+                        type="button"
+                        className={`row-compare-btn ${isInMatrix ? 'is-active' : ''}`}
+                        title={isInMatrix ? 'Remove from Comparison Matrix' : 'Add to Comparison Matrix'}
+                        onClick={(e) => {
+                          e.stopPropagation()
+                          toggleComparison(item.acronym)
+                        }}
+                      >
+                        {isInMatrix ? '✓ In Matrix' : '+ Compare'}
+                      </button>
+
+                      <span
+                        className={`focus-pill focus-${(
+                          item.fire_safety_pillar ||
+                          item.type ||
+                          'prevention'
+                        ).toLowerCase()}`}
+                      >
+                        {item.fire_safety_pillar || item.type}
+                      </span>
+
+                      <span className="relevance-cell">
+                        <span className="relevance-number">
+                          {item.relevance_score || item.relevance || 90}
+                        </span>
+                        <span className="relevance-track">
+                          <span
+                            style={{
+                              width: `${item.relevance_score || item.relevance || 90}%`,
+                            }}
+                          />
+                        </span>
+                      </span>
+
+                      <span className="row-arrow">
+                        <Icon name="chevron" size={17} />
+                      </span>
+                    </div>
+                  )
+                })}
+
+                {visibleInvestigations.length === 0 && (
+                  <div className="empty-state">
+                    <span className="empty-icon">
+                      <Icon name="search" size={22} />
+                    </span>
+                    <strong>No investigations found</strong>
+                    <span>Try another search term or clear your focus filter.</span>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setQuery('')
+                        selectFilter('All studies')
+                      }}
                     >
-                      {item.fire_safety_pillar || item.type}
-                    </span>
-
-                    <span className="relevance-cell">
-                      <span className="relevance-number">
-                        {item.relevance_score || item.relevance || 90}
-                      </span>
-                      <span className="relevance-track">
-                        <span
-                          style={{
-                            width: `${item.relevance_score || item.relevance || 90}%`,
-                          }}
-                        />
-                      </span>
-                    </span>
-
-                    <span className="row-arrow">
-                      <Icon name="chevron" size={17} />
-                    </span>
+                      Clear filters
+                    </button>
                   </div>
-                )
-              })}
-
-              {visibleInvestigations.length === 0 && (
-                <div className="empty-state">
-                  <span className="empty-icon">
-                    <Icon name="search" size={22} />
-                  </span>
-                  <strong>No investigations found</strong>
-                  <span>Try another search term or clear your focus filter.</span>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setQuery('')
-                      selectFilter('All studies')
-                    }}
-                  >
-                    Clear filters
-                  </button>
-                </div>
-              )}
+                )}
+              </div>
             </div>
 
             <div className="ranking-footnote">
@@ -510,56 +493,6 @@ function App() {
           <FlexRunsViewer />
         )}
 
-        {/* Section 3: SI Research Assistant */}
-        <section className="si-panel" aria-label="Ask the research assistant">
-          <div className="si-icon">
-            <Icon name="spark" size={20} />
-          </div>
-          <div className="si-content">
-            <div className="si-heading">
-              <div>
-                <span className="si-kicker">SCIENTIFIC INTELLIGENCE (SI) ENGINE</span>
-                <h2>
-                  Ask a research question about {selectedInvestigation?.acronym}
-                  <span>.</span>
-                </h2>
-              </div>
-              <span className="preview-label">SI SYNTHESIS</span>
-            </div>
-            <p>
-              Explore extinction mechanics, atmospheric suppression thresholds, or cool flame risks in microgravity.
-            </p>
-
-            <form className="question-form" onSubmit={submitQuestion}>
-              <label className="visually-hidden" htmlFor="question">
-                Ask about microgravity fire safety
-              </label>
-              <input
-                id="question"
-                value={question}
-                onChange={(event) => setQuestion(event.target.value)}
-                placeholder="e.g. How does 30% oxygen affect droplet extinction and suppressant requirements?"
-              />
-              <button
-                type="submit"
-                disabled={isAskingSI || !question.trim() || !selectedInvestigation}
-              >
-                {isAskingSI ? 'Synthesizing...' : 'Ask SI'}{' '}
-                <Icon name="arrow" size={16} />
-              </button>
-            </form>
-
-            {answer && (
-              <div className="si-answer" role="status">
-                {answer}
-              </div>
-            )}
-            <div className="si-disclaimer">
-              Connected to SI Combustion Synthesis Engine · NASA Space Apps Challenge 2026.
-            </div>
-          </div>
-        </section>
-
         <footer className="page-footer">
           <span>FLAME IN FREEFALL</span>
           <span>NASA SPACE APPS CHALLENGE · 2026</span>
@@ -567,7 +500,12 @@ function App() {
       </main>
 
       {/* Right Aside: Selected Investigation Detail Panel */}
-      <aside className="detail-panel" aria-label="Selected investigation details">
+      <aside
+        id="investigation-brief-panel"
+        className="detail-panel"
+        aria-label="Selected investigation details"
+        hidden={isBriefHidden}
+      >
         {selectedInvestigation && (
           <>
             <div className="detail-topline">

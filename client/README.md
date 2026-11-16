@@ -11,13 +11,13 @@ npm install
 npm run dev
 ```
 
-The prototype currently uses local sample data in `src/App.jsx`; it does not yet request investigation data or SI responses from the backend.
+The interface can load investigation data from the backend. SI cross-synthesis uses the configured API when available and falls back to a deterministic prototype response otherwise.
 
 ## Prototype behavior
 
 - Search investigations by name, project, safety focus, fuel, hardware, and tags.
 - Filter by prevention, detection, or suppression.
 - Select an investigation to see its brief and fire-safety context.
-- Try the SI preview, which returns a local placeholder response.
+- Use the cross-experiment SI synthesis tool in the comparison matrix.
 
-Relevance scores and research summaries are prototype content, not NASA-published rankings or official interpretations. Replace the sample data and placeholder response with the backend/API contract when it is ready.
+Relevance scores and research summaries are prototype content, not NASA-published rankings or official interpretations.

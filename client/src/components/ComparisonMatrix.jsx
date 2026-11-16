@@ -337,9 +337,9 @@ export default function ComparisonMatrix({
           <div className="si-synthesis-title-area">
             <span className="si-spark-icon">✨</span>
             <div>
-              <h3>SI Scientific Intelligence Cross-Synthesis Engine</h3>
+              <h3>Scientific Intelligence (SI) Cross-Synthesis Engine</h3>
               <p>
-                Synthesize boundary divergences and generate actionable habitat fire safety protocols using LLM / Gemini API.
+                Compare study boundaries and fire-safety implications. Uses a configured synthesis API when available; otherwise it returns a deterministic prototype response.
               </p>
             </div>
           </div>
