@@ -494,12 +494,11 @@
   border-radius: 6px;
   background: #11141a;
   scrollbar-color: #4b3a34 #11141a;
-  scrollbar-width: thin;
+  scrollbar-width: auto;
 }
 
 .investigation-list {
-  min-width: 760px;
-  overflow: hidden;
+  min-width: 560px;
 }
 
 .investigation-row {
@@ -507,7 +506,7 @@
   display: grid;
   width: 100%;
   min-height: 65px;
-  grid-template-columns: 27px minmax(0, 1fr) auto 60px 16px;
+  grid-template-columns: 27px minmax(0, 1fr) auto auto 60px 16px;
   align-items: center;
   gap: 9px;
   padding: 9px 11px;
@@ -969,7 +968,7 @@
   }
 
   .investigation-row {
-    grid-template-columns: 24px minmax(0, 1fr) auto 48px 14px;
+    grid-template-columns: 24px minmax(0, 1fr) auto auto 48px 14px;
     gap: 7px;
     padding-inline: 8px;
   }
@@ -1146,7 +1145,7 @@
 
   .investigation-row {
     min-height: 65px;
-    grid-template-columns: 22px minmax(280px, 1fr) auto 48px 13px;
+    grid-template-columns: 22px minmax(280px, 1fr) auto auto 48px 13px;
     gap: 7px;
     padding-inline: 9px;
   }
