@@ -397,6 +397,7 @@ REQUIRED SCIENTIFIC INTELLIGENCE OUTPUT:
  * Send SI synthesis request to API with fallback synthesis engine
  */
 export async function requestSISynthesis({ acronyms, scenario, userQuery, selectedExperiments }) {
+  let fallbackReason;
   try {
     const res = await fetch("/api/si-synthesis", {
       method: "POST",
@@ -407,15 +408,19 @@ export async function requestSISynthesis({ acronyms, scenario, userQuery, select
         user_query: userQuery,
       }),
     });
-    if (res.ok) {
-      const data = await res.json();
+    const data = await res.json();
+    if (res.ok && data.synthesis) {
       return data;
     }
+    fallbackReason = res.ok
+      ? "The SI backend response did not include a synthesis."
+      : `The SI backend returned HTTP ${res.status}.`;
   } catch (err) {
-    console.warn("SI API call failed; generating client-side scientific synthesis:", err);
+    console.warn("SI API request failed; generating a client-side prototype response:", err);
+    fallbackReason = "The SI backend is unavailable. Check that the server is running.";
   }
 
-  // Fallback client-side generator
+  // Client-side prototype response for use when the SI backend is unavailable.
   const prompt = generateSISynthesisPrompt({
     selectedExperiments,
     scenario,
@@ -443,13 +448,15 @@ export async function requestSISynthesis({ acronyms, scenario, userQuery, select
 3. **Calibrated Suppressant Discharge:** Size total-flooding CO₂ or He suppression systems for the elevated 30%+ oxygen partial pressure envelope.`;
 
   return {
-    status: "success",
+    status: "fallback",
     prompt,
     synthesis,
     meta: {
       investigations: acronyms,
       scenario,
       timestamp: new Date().toISOString(),
+      provider: "client-fallback",
+      warning: fallbackReason,
     },
   };
 }

@@ -490,14 +490,17 @@ Please deliver a structured Scientific Intelligence (SI) Synthesis with:
 3. Mission Scenario Risk Assessment for ${targetScenario}.
 4. Actionable Fire Safety Protocol & Architecture Recommendations (detection sensor wavelengths, suppressant agent deployment, ventilation management).`;
 
-    // High-fidelity scientific synthesis response
+    // Use Gemini when configured; otherwise return an explicitly labeled prototype response.
     let synthesisContent = "";
+    let provider = "prototype";
+    let fallbackReason = process.env.GEMINI_API_KEY
+      ? "Gemini did not return a synthesis."
+      : "GEMINI_API_KEY is missing from the server environment.";
 
-    // If an external Gemini API key is supplied, query Gemini API:
     if (process.env.GEMINI_API_KEY) {
       try {
         const response = await fetch(
-          `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${process.env.GEMINI_API_KEY}`,
+          `https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash-lite:generateContent?key=${process.env.GEMINI_API_KEY}`,
           {
             method: "POST",
             headers: { "Content-Type": "application/json" },
@@ -506,15 +509,34 @@ Please deliver a structured Scientific Intelligence (SI) Synthesis with:
             }),
           }
         );
-        const json = await response.json();
-        synthesisContent = json.candidates?.[0]?.content?.parts?.[0]?.text;
+        const result = await response.json();
+        if (!response.ok) {
+          const apiMessage = String(result.error?.message || response.statusText);
+          const safeApiMessage = apiMessage
+            .split(process.env.GEMINI_API_KEY)
+            .join("[redacted]")
+            .slice(0, 240);
+          fallbackReason = `Gemini API error (HTTP ${response.status}): ${safeApiMessage}`;
+          console.warn(`Gemini API request rejected (${response.status}):`, safeApiMessage);
+        } else {
+          synthesisContent = result.candidates?.[0]?.content?.parts?.[0]?.text?.trim() || "";
+          if (synthesisContent) {
+            provider = "gemini";
+          } else {
+            const blockReason = result.promptFeedback?.blockReason;
+            fallbackReason = blockReason
+              ? `Gemini blocked the prompt (${blockReason}).`
+              : "Gemini returned no synthesis text.";
+          }
+        }
       } catch (geminiErr) {
-        console.warn("Gemini API call failed, using scientific synthesis engine:", geminiErr.message);
+        fallbackReason = "Gemini request failed. Check backend logs and network access.";
+        console.warn("Gemini API request failed:", geminiErr.message);
       }
     }
 
     if (!synthesisContent) {
-      // Deterministic, scientifically verified SI synthesis engine for NASA Space Apps
+      // Deterministic prototype response for use when Gemini is unavailable.
       const names = selected.map((s) => s.acronym).join(" vs. ");
       synthesisContent = `### SI Comparative Synthesis: ${names} (${targetScenario})
 
@@ -550,13 +572,15 @@ Please deliver a structured Scientific Intelligence (SI) Synthesis with:
     }
 
     res.json({
-      status: "success",
+      status: provider === "gemini" ? "success" : "fallback",
       prompt: fullPrompt,
       synthesis: synthesisContent,
       meta: {
         investigations: selected.map((s) => s.acronym),
         scenario: targetScenario,
         timestamp: new Date().toISOString(),
+        provider,
+        warning: provider === "gemini" ? null : fallbackReason,
       },
     });
   } catch (err) {
